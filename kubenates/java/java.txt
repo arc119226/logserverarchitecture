@@ -1,0 +1,9 @@
+測試log打印pod
+
+執行build.sh
+
+掛載
+kubectl apply -f java.yaml -njava
+
+卸載
+kubectl delete -f java.yaml -njava

@@ -1,0 +1,76 @@
+package version
+elk 6.8
+kafka 2.11-0.11.0.3
+ruby-kafka 1.0.0
+fluent-plugin-kafka 0.13.0
+logstash 6.2.1
+
+安裝步驟為 elk -> kafka -> logstash -> fluentd
+
+1.配置elk 6.x
+cd ./elk/docker-elk-release-6.x
+docker-compose up &
+
+2.配置kafka 2.11-0.11.0.3
+cd ./kafka/kafka-docker-0.11.0.1
+依據環境選擇修改docker-compose-single-broker.yml 裡面的 KAFKA_ADVERTISED_HOST_NAME 為安裝機器的ip
+docker-compose -f docker-compose-single-broker.yml up -d
+若要啟動多個broker可以下
+docker-compose up --scale kafka=3 --no-recreate &
+
+3.配置logstash
+rpm -ivh ./logstash/logstash-6.2.1.rpm
+將kafka_Input_fluentd.conf 
+修改 kafka host,port,topic 
+修改 elasticsearch host port,user,password
+複製到放置設定的地方/etc/logstash/conf.d/
+啟動logstash
+systemctl start logstash
+
+4.配置fluentd
+kubectl create namespace logging
+
+kubectl label nodes <node-name> beta.kubernetes.io/fluentd-ds-ready=true
+
+修改configmap.yaml
+	host <es hostname>
+	port 9200
+	user <帳號>
+	password <密碼>
+
+kubectl apply -f ./kubenates/fluentd/configmap.yaml -nlogging
+kubectl apply -f ./kubenates/fluentd/daemonset.yaml -nlogging
+
+登入官方的fluentd pod
+kubectl exec -it fluentd-es-<xxxx> -n logging sh
+執行安裝特殊版本插件
+
+gem uninstall fluent-plugin-kafka
+gem uninstall ruby-kafka
+gem install fluent-plugin-kafka --version 0.13.0
+fluent-gem install fluent-plugin-kafka --version 0.13.0
+gem install ruby-kafka --version 1.0.0
+fluent-gem install ruby-kafka --version 1.0.0
+
+執行完指令後更新image
+docker commit <image id> fluent/fluentd-kubernetes-daemonset:v1-debian-elasticsearch
+
+kubectl delete -f ./kubenates/fluentd/daemonset.yaml -nlogging
+kubectl delete -f ./kubenates/fluentd/configmap.yaml -nlogging
+
+修改 brokers <kafka host/ip>:9092
+     default_topic <topic>
+
+kubectl apply -f ./kubenates/fluentd/kafaka_configmap.yaml -nlogging
+kubectl apply -f ./kubenates/fluentd/daemonset.yaml -nlogging
+
+全部啟動後驗證
+
+kibana
+http://<kibana-hostname>:5601/
+elasticsearch
+http://<es-hostname>:9200/
+帳號elastic
+密碼changeme
+
+telnet <kafka-hostname> 2181

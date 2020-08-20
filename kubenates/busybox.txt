@@ -1,0 +1,3 @@
+測試工具
+kubectl apply -f busybox.yaml
+kubectl exec -it busybox sh

@@ -1,0 +1,35 @@
+1. echo 262144 > /proc/sys/vm/max_map_count
+2. echo 1 > /proc/sys/vm/drop_caches
+3. systemctl stop firewalld
+4 setenforce 0
+5. sudo yum update -y
+6. sudo yum upgrade -y
+
+docker
+1. curl -fsSL https://get.docker.com/ | sh
+2. sudo systemctl start docker
+3. sudo systemctl status docker
+4. sudo systemctl enable docker
+
+docker-compose
+1. sudo curl -L "https://github.com/docker/compose/releases/download/1.23.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+2. sudo chmod +x /usr/local/bin/docker-compose
+3. docker-compose --version
+4. service docker restart
+
+k8s minikube
+1. grep -E --color 'vmx|svm' /proc/cpuinfo
+2. curl -Lo minikube https://storage.googleapis.com/minikube/releases/latest/minikube-linux-amd64 && chmod +x minikube
+3. mkdir -p /usr/local/bin/
+4. install minikube /usr/local/bin/
+5. yum install conntrack
+6. minikube start --vm-driver=none
+7. minikube addons enable ingress
+
+systemctl stop firewalld
+
+maybe...
+
+kubectl create namespace kube-logging
+
+apply setting ...blablabla
