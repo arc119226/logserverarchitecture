@@ -35,3 +35,6 @@ kubectl create namespace kube-logging
 apply setting ...blablabla
 
  minikube addons enable heapster
+ 
+ helm install prometheus prometheus-community/prometheus
+
