@@ -38,3 +38,4 @@ apply setting ...blablabla
  
  helm install prometheus prometheus-community/prometheus
 
+kubectl --namespace default port-forward --address 0.0.0.0 service/prometheus-server 8888:80
