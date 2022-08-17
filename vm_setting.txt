@@ -1,3 +1,5 @@
+https://www.linuxtechi.com/install-docker-ce-centos-8-rhel-8/
+
 1. echo 262144 > /proc/sys/vm/max_map_count
 2. echo 1 > /proc/sys/vm/drop_caches
 3. systemctl stop firewalld
